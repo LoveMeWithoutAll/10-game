@@ -11,25 +11,25 @@ function setBoardBounds(board: HTMLElement) {
       y: 0,
       top: 0,
       left: 0,
-      right: 1700,
-      bottom: 1000,
-      width: 1700,
-      height: 1000,
+      right: 800,
+      bottom: 1200,
+      width: 800,
+      height: 1200,
       toJSON: () => ({}),
     }),
   });
 }
 
-test('renders a 17 by 10 number board', () => {
+test('renders an 8 by 12 number board', () => {
   render(
     <GameBoard
-      board={Array<Board[number]>(170).fill(1)}
+      board={Array<Board[number]>(96).fill(1)}
       interactive
       onCompleteSelection={() => undefined}
     />,
   );
 
-  expect(screen.getAllByRole('gridcell')).toHaveLength(170);
+  expect(screen.getAllByRole('gridcell')).toHaveLength(96);
   expect(screen.getByRole('grid', { name: '숫자 10 게임 보드' })).toBeInTheDocument();
 });
 
@@ -37,7 +37,7 @@ test('emits the rectangle selected with pointer input', () => {
   let completedSelection: Selection | null = null;
   render(
     <GameBoard
-      board={Array<Board[number]>(170).fill(1)}
+      board={Array<Board[number]>(96).fill(1)}
       interactive
       onCompleteSelection={(selection) => {
         completedSelection = selection;
@@ -58,7 +58,7 @@ test('emits the rectangle selected with pointer input', () => {
 });
 
 test('marks an in-progress selection red when its total is 10', () => {
-  const boardValues: Board = Array(170).fill(null);
+  const boardValues: Board = Array(96).fill(null);
   boardValues[0] = 4;
   boardValues[1] = 6;
   render(
@@ -82,7 +82,7 @@ test('cancels a pointer selection without completing it', () => {
   let completed = false;
   render(
     <GameBoard
-      board={Array<Board[number]>(170).fill(1)}
+      board={Array<Board[number]>(96).fill(1)}
       interactive
       onCompleteSelection={() => {
         completed = true;

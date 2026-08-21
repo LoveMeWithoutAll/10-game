@@ -1,5 +1,7 @@
 # 숫자 10 과일 상자 게임 구현 계획
 
+> **Current implementation note (2026-08-21):** 모바일 화면 최적화를 위해 보드는 이후 8열×12행, 총 96개로 변경됐다. 아래 17×10 수치 예시는 최초 버전 구현 당시의 실행 기록이다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 17×10 숫자 보드에서 합계 10인 직사각형을 제거하는 120초 React SPA 게임을 구현한다.

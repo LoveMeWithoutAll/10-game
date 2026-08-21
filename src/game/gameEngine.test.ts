@@ -9,11 +9,11 @@ import {
 } from './gameEngine';
 
 describe('createBoard', () => {
-  test('creates 170 values from 1 through 9', () => {
+  test('creates 96 values from 1 through 9', () => {
     const lowest = createBoard(() => 0);
     const highest = createBoard(() => 0.999);
 
-    expect(lowest).toHaveLength(170);
+    expect(lowest).toHaveLength(96);
     expect(lowest.every((value) => value === 1)).toBe(true);
     expect(highest.every((value) => value === 9)).toBe(true);
   });

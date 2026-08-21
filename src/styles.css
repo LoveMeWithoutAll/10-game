@@ -61,6 +61,8 @@ button {
 }
 
 .game-header {
+  width: min(100%, 32rem);
+  margin-inline: auto;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -184,20 +186,22 @@ button {
 .game-stage {
   position: relative;
   width: 100%;
+  display: flex;
+  justify-content: center;
   isolation: isolate;
 }
 
 .game-stage:has(.game-overlay--idle) {
-  min-height: clamp(23rem, 57vw, 41rem);
+  min-height: min(70svh, 42rem);
 }
 
 .game-board {
   position: relative;
-  width: 100%;
-  aspect-ratio: 17 / 10;
+  width: min(100%, 32rem);
+  aspect-ratio: 8 / 12;
   display: grid;
-  grid-template-columns: repeat(17, minmax(0, 1fr));
-  grid-template-rows: repeat(10, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(12, minmax(0, 1fr));
   gap: clamp(1px, 0.2vw, 3px);
   overflow: hidden;
   touch-action: none;
@@ -208,7 +212,7 @@ button {
     linear-gradient(rgb(112 67 46 / 8%) 1px, transparent 1px),
     linear-gradient(90deg, rgb(112 67 46 / 8%) 1px, transparent 1px),
     var(--board);
-  background-size: calc(100% / 17) calc(100% / 10);
+  background-size: calc(100% / 8) calc(100% / 12);
   box-shadow:
     0 0 0 3px #4c2f22,
     0 clamp(0.5rem, 1.2vw, 0.9rem) 0 #3c271d,
@@ -283,7 +287,7 @@ button {
   position: relative;
   z-index: 2;
   font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
-  font-size: clamp(0.62rem, 2.15vw, 1.52rem);
+  font-size: clamp(1rem, 4.5vw, 1.65rem);
   line-height: 1;
   text-shadow: 0 1px 0 rgb(117 22 20 / 28%);
 }
@@ -355,13 +359,20 @@ button {
     0 1.2rem 2.6rem rgb(0 0 0 / 28%);
 }
 
+.game-overlay--idle {
+  width: min(100%, 32rem);
+}
+
 .game-overlay--finished {
   position: absolute;
-  inset: 0;
+  inset-block: 0;
+  left: 50%;
+  width: min(100%, 32rem);
   min-height: 0;
   border-color: rgb(166 107 66 / 88%);
   background: rgb(255 249 223 / 94%);
   backdrop-filter: blur(4px);
+  transform: translateX(-50%);
 }
 
 .game-overlay__apple {
@@ -469,6 +480,8 @@ button {
 }
 
 .game-help {
+  width: min(100%, 32rem);
+  margin-inline: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -578,7 +591,7 @@ button {
   }
 
   .game-board {
-    width: min(100%, calc((100svh - 4.8rem) * 1.7));
+    width: min(100%, calc((100svh - 4.8rem) * 0.6667));
     margin-inline: auto;
   }
 }

@@ -1,3 +1,5 @@
+import { CELL_COUNT } from '../game/gameEngine';
+
 interface GameStatusProps {
   score: number;
   remainingMs: number;
@@ -19,7 +21,7 @@ export function GameStatus({ score, remainingMs }: GameStatusProps) {
         <output className="status-card__value" aria-label="현재 점수">
           {score}
         </output>
-        <span className="status-card__unit">/ 170</span>
+        <span className="status-card__unit">/ {CELL_COUNT}</span>
       </div>
       <div className="status-card status-card--time" data-low={remainingMs <= 10_000}>
         <span className="status-card__label">남은 시간</span>

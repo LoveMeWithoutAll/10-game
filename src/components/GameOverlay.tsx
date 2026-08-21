@@ -1,3 +1,5 @@
+import { CELL_COUNT } from '../game/gameEngine';
+
 interface GameOverlayProps {
   phase: 'idle' | 'finished';
   score: number;
@@ -6,7 +8,7 @@ interface GameOverlayProps {
 
 export function GameOverlay({ phase, score, onStart }: GameOverlayProps) {
   const isIdle = phase === 'idle';
-  const isPerfect = score === 170;
+  const isPerfect = score === CELL_COUNT;
 
   return (
     <section className={`game-overlay game-overlay--${phase}`} aria-live="polite">

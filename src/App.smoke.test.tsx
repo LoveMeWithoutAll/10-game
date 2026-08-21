@@ -19,15 +19,16 @@ test('시작 전에는 보드를 가리고 게임 규칙과 시작 동작을 제
   expect(screen.getByRole('button', { name: '게임 시작' })).toBeInTheDocument();
 });
 
-test('시작 버튼을 누르면 17×10 보드와 120초 라운드를 연다', () => {
+test('시작 버튼을 누르면 8×12 보드와 120초 라운드를 연다', () => {
   render(<App />);
 
   fireEvent.click(screen.getByRole('button', { name: '게임 시작' }));
 
   expect(screen.getByRole('grid')).toBeInTheDocument();
-  expect(screen.getAllByRole('gridcell')).toHaveLength(170);
+  expect(screen.getAllByRole('gridcell')).toHaveLength(96);
   expect(screen.getByText('02:00')).toBeInTheDocument();
   expect(screen.getByLabelText('현재 점수')).toHaveTextContent('0');
+  expect(screen.getByText('/ 96')).toBeInTheDocument();
 });
 
 test('시간이 끝나면 결과를 보여주고 새 라운드를 시작할 수 있다', () => {

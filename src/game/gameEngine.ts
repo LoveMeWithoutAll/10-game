@@ -1,5 +1,5 @@
-export const BOARD_COLUMNS = 17;
-export const BOARD_ROWS = 10;
+export const BOARD_COLUMNS = 8;
+export const BOARD_ROWS = 12;
 export const CELL_COUNT = BOARD_COLUMNS * BOARD_ROWS;
 export const TARGET_SUM = 10;
 

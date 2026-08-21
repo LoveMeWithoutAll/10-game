@@ -19,7 +19,7 @@ describe('useFruitBoxGame', () => {
     act(() => result.current.startGame());
 
     expect(result.current.phase).toBe('playing');
-    expect(result.current.board).toHaveLength(170);
+    expect(result.current.board).toHaveLength(96);
     expect(result.current.board.every((value) => value === 1)).toBe(true);
     expect(result.current.score).toBe(0);
     expect(result.current.remainingMs).toBe(120_000);
@@ -64,8 +64,8 @@ describe('useFruitBoxGame', () => {
     );
     act(() => result.current.startGame());
 
-    for (let row = 0; row < 10; row += 1) {
-      for (let column = 0; column < 16; column += 2) {
+    for (let row = 0; row < 12; row += 1) {
+      for (let column = 0; column < 8; column += 2) {
         act(() => {
           result.current.completeSelection({
             start: { row, column },
@@ -75,16 +75,7 @@ describe('useFruitBoxGame', () => {
       }
     }
 
-    for (let row = 0; row < 10; row += 2) {
-      act(() => {
-        result.current.completeSelection({
-          start: { row, column: 16 },
-          end: { row: row + 1, column: 16 },
-        });
-      });
-    }
-
-    expect(result.current.score).toBe(170);
+    expect(result.current.score).toBe(96);
     expect(result.current.phase).toBe('finished');
     expect(result.current.board.every((value) => value === null)).toBe(true);
   });
