@@ -5,6 +5,7 @@ import {
   createBoard,
   getSelectionIndices,
   getSelectionTotal,
+  hasAvailableSelection,
   type Board,
 } from './gameEngine';
 
@@ -73,5 +74,21 @@ describe('clearSelection', () => {
 
     expect(result).toEqual({ board, clearedCount: 0, valid: false });
     expect(result.board).toBe(board);
+  });
+});
+
+describe('hasAvailableSelection', () => {
+  test('finds a rectangle totaling 10 across cleared cells', () => {
+    const board: Board = Array(CELL_COUNT).fill(null);
+    board[0] = 4;
+    board[2] = 6;
+
+    expect(hasAvailableSelection(board)).toBe(true);
+  });
+
+  test('returns false when no rectangle can total 10', () => {
+    const board: Board = Array(CELL_COUNT).fill(9);
+
+    expect(hasAvailableSelection(board)).toBe(false);
   });
 });

@@ -65,3 +65,37 @@ export function clearSelection(board: Board, selection: Selection): ClearResult 
 
   return { board: nextBoard, clearedCount, valid: true };
 }
+
+export function hasAvailableSelection(board: Board): boolean {
+  for (let firstRow = 0; firstRow < BOARD_ROWS; firstRow += 1) {
+    const columnTotals = Array<number>(BOARD_COLUMNS).fill(0);
+
+    for (let lastRow = firstRow; lastRow < BOARD_ROWS; lastRow += 1) {
+      for (let column = 0; column < BOARD_COLUMNS; column += 1) {
+        columnTotals[column] += board[lastRow * BOARD_COLUMNS + column] ?? 0;
+      }
+
+      for (let firstColumn = 0; firstColumn < BOARD_COLUMNS; firstColumn += 1) {
+        let total = 0;
+
+        for (
+          let lastColumn = firstColumn;
+          lastColumn < BOARD_COLUMNS;
+          lastColumn += 1
+        ) {
+          total += columnTotals[lastColumn];
+
+          if (total === TARGET_SUM) {
+            return true;
+          }
+
+          if (total > TARGET_SUM) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}

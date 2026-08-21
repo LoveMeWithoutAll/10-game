@@ -1,14 +1,26 @@
-import { CELL_COUNT } from '../game/gameEngine';
+import type { FinishReason } from '../game/useFruitBoxGame';
 
 interface GameOverlayProps {
   phase: 'idle' | 'finished';
   score: number;
+  finishReason?: FinishReason | null;
   onStart: () => void;
 }
 
-export function GameOverlay({ phase, score, onStart }: GameOverlayProps) {
+export function GameOverlay({
+  phase,
+  score,
+  finishReason = null,
+  onStart,
+}: GameOverlayProps) {
   const isIdle = phase === 'idle';
-  const isPerfect = score === CELL_COUNT;
+  const heading = isIdle
+    ? '10을 만드세요'
+    : finishReason === 'cleared'
+      ? '모두 찾았어요!'
+      : finishReason === 'no-moves'
+        ? '승리!'
+        : '시간 종료';
 
   return (
     <section className={`game-overlay game-overlay--${phase}`} aria-live="polite">
@@ -16,11 +28,14 @@ export function GameOverlay({ phase, score, onStart }: GameOverlayProps) {
         10
       </div>
       <p className="game-overlay__eyebrow">120초 숫자 퍼즐</p>
-      <h2>{isIdle ? '10을 만드세요' : isPerfect ? '모두 찾았어요!' : '시간 종료'}</h2>
+      <h2>{heading}</h2>
       {isIdle ? (
         <p>합이 10이 되도록 사과를 드래그하세요</p>
       ) : (
-        <p className="game-overlay__result">최종 점수 {score}점</p>
+        <>
+          {finishReason === 'no-moves' && <p>가능한 수를 모두 찾았어요</p>}
+          <p className="game-overlay__result">최종 점수 {score}점</p>
+        </>
       )}
       <button className="primary-button" type="button" onClick={onStart}>
         {isIdle ? '게임 시작' : '다시 시작'}

@@ -8,6 +8,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.useRealTimers();
 });
 
@@ -45,4 +46,15 @@ test('시간이 끝나면 결과를 보여주고 새 라운드를 시작할 수 
   expect(screen.getByRole('grid')).toBeInTheDocument();
   expect(screen.getByText('02:00')).toBeInTheDocument();
   expect(screen.queryByRole('heading', { name: '시간 종료' })).not.toBeInTheDocument();
+});
+
+test('시작한 보드에 가능한 수가 없으면 즉시 승리한다', () => {
+  vi.spyOn(Math, 'random').mockReturnValue(0.999);
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: '게임 시작' }));
+
+  expect(screen.getByRole('heading', { name: '승리!' })).toBeInTheDocument();
+  expect(screen.getByText('가능한 수를 모두 찾았어요')).toBeInTheDocument();
+  expect(screen.getByText('최종 점수 0점')).toBeInTheDocument();
 });

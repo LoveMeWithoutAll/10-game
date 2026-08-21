@@ -56,6 +56,30 @@ describe('useFruitBoxGame', () => {
 
     expect(result.current.remainingMs).toBe(0);
     expect(result.current.phase).toBe('finished');
+    expect(result.current.finishReason).toBe('timeout');
+  });
+
+  test('wins after a valid selection leaves no available move', () => {
+    let index = 0;
+    const values = [0.34, 0.56];
+    const { result } = renderHook(() =>
+      useFruitBoxGame({
+        random: () => values[index++] ?? 0.999,
+        now: () => 1_000,
+      }),
+    );
+    act(() => result.current.startGame());
+
+    act(() => {
+      result.current.completeSelection({
+        start: { row: 0, column: 0 },
+        end: { row: 0, column: 1 },
+      });
+    });
+
+    expect(result.current.score).toBe(2);
+    expect(result.current.phase).toBe('finished');
+    expect(result.current.finishReason).toBe('no-moves');
   });
 
   test('finishes immediately after every apple is cleared', () => {
@@ -77,6 +101,7 @@ describe('useFruitBoxGame', () => {
 
     expect(result.current.score).toBe(96);
     expect(result.current.phase).toBe('finished');
+    expect(result.current.finishReason).toBe('cleared');
     expect(result.current.board.every((value) => value === null)).toBe(true);
   });
 });

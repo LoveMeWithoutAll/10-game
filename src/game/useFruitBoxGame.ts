@@ -2,6 +2,7 @@ import { useCallback, useEffect, useReducer, useRef } from 'react';
 import {
   clearSelection,
   createBoard,
+  hasAvailableSelection,
   type Board,
   type Selection,
 } from './gameEngine';
@@ -9,6 +10,7 @@ import {
 export const ROUND_DURATION_MS = 120_000;
 
 export type GamePhase = 'idle' | 'playing' | 'finished';
+export type FinishReason = 'cleared' | 'no-moves' | 'timeout';
 
 interface GameState {
   phase: GamePhase;
@@ -16,6 +18,7 @@ interface GameState {
   score: number;
   remainingMs: number;
   endAt: number | null;
+  finishReason: FinishReason | null;
 }
 
 type GameAction =
@@ -29,16 +32,20 @@ const initialState: GameState = {
   score: 0,
   remainingMs: ROUND_DURATION_MS,
   endAt: null,
+  finishReason: null,
 };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   if (action.type === 'start') {
+    const hasAvailableMove = hasAvailableSelection(action.board);
+
     return {
-      phase: 'playing',
+      phase: hasAvailableMove ? 'playing' : 'finished',
       board: action.board,
       score: 0,
       remainingMs: ROUND_DURATION_MS,
-      endAt: action.endAt,
+      endAt: hasAvailableMove ? action.endAt : null,
+      finishReason: hasAvailableMove ? null : 'no-moves',
     };
   }
 
@@ -47,7 +54,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 
   if (action.now >= state.endAt) {
-    return { ...state, phase: 'finished', remainingMs: 0 };
+    return {
+      ...state,
+      phase: 'finished',
+      remainingMs: 0,
+      finishReason: 'timeout',
+    };
   }
 
   if (action.type === 'tick') {
@@ -61,12 +73,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 
   const isComplete = result.board.every((value) => value === null);
+  const hasAvailableMove = isComplete || hasAvailableSelection(result.board);
+  const finishReason = isComplete
+    ? 'cleared'
+    : hasAvailableMove
+      ? null
+      : 'no-moves';
 
   return {
     ...state,
-    phase: isComplete ? 'finished' : 'playing',
+    phase: finishReason ? 'finished' : 'playing',
     board: result.board,
     score: state.score + result.clearedCount,
+    finishReason,
   };
 }
 
@@ -116,6 +135,7 @@ export function useFruitBoxGame({
     board: state.board,
     score: state.score,
     remainingMs: state.remainingMs,
+    finishReason: state.finishReason,
     startGame,
     completeSelection,
   };

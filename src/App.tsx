@@ -35,6 +35,7 @@ export default function App() {
               <GameOverlay
                 phase="finished"
                 score={game.score}
+                finishReason={game.finishReason}
                 onStart={game.startGame}
               />
             )}
