@@ -22,6 +22,14 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 html {
   min-width: 320px;
   min-height: 100%;
@@ -30,9 +38,9 @@ html {
 
 body {
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 0;
   margin: 0;
-  overflow-x: hidden;
+  overscroll-behavior: none;
   background:
     radial-gradient(circle at 8% 12%, rgb(159 196 90 / 24%) 0 7rem, transparent 7.1rem),
     radial-gradient(circle at 91% 4%, rgb(63 125 67 / 48%) 0 12rem, transparent 12.1rem),
@@ -51,13 +59,15 @@ button {
 
 .game-shell {
   width: min(100%, 76rem);
-  min-height: 100svh;
+  height: 100svh;
+  min-height: 0;
   margin: 0 auto;
   padding: clamp(0.8rem, 2vw, 1.6rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: clamp(0.7rem, 1.6vw, 1.2rem);
+  overflow: hidden;
 }
 
 .game-header {
@@ -186,18 +196,19 @@ button {
 .game-stage {
   position: relative;
   width: 100%;
+  min-height: 0;
   display: flex;
+  flex: 1 1 auto;
+  align-items: center;
   justify-content: center;
+  container-type: size;
   isolation: isolate;
-}
-
-.game-stage:has(.game-overlay--idle) {
-  min-height: min(70svh, 42rem);
 }
 
 .game-board {
   position: relative;
   width: min(100%, 32rem);
+  width: min(100%, 32rem, 66.6667cqh);
   aspect-ratio: 8 / 12;
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -361,6 +372,8 @@ button {
 
 .game-overlay--idle {
   width: min(100%, 32rem);
+  height: min(100%, 42rem);
+  min-height: 0;
 }
 
 .game-overlay--finished {
@@ -513,7 +526,8 @@ button {
 
 @media (max-width: 640px) {
   .game-shell {
-    min-height: 100svh;
+    height: 100svh;
+    min-height: 0;
     justify-content: flex-start;
     padding: 0.75rem 0.55rem;
   }
