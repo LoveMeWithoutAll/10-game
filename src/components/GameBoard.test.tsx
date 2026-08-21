@@ -78,6 +78,26 @@ test('marks an in-progress selection red when its total is 10', () => {
   expect(screen.getByText('합계 10')).toBeInTheDocument();
 });
 
+test('keeps cells in their original grid areas while a selection frame is visible', () => {
+  render(
+    <GameBoard
+      board={Array<Board[number]>(96).fill(1)}
+      interactive
+      onCompleteSelection={() => undefined}
+    />,
+  );
+  const board = screen.getByRole('grid');
+  setBoardBounds(board);
+
+  fireEvent.pointerDown(board, { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
+  fireEvent.pointerMove(board, { pointerId: 1, clientX: 250, clientY: 250 });
+
+  const cells = screen.getAllByRole('gridcell');
+  expect(screen.getByTestId('selection-frame')).toBeInTheDocument();
+  expect(cells[0]).toHaveStyle({ gridRow: '1', gridColumn: '1' });
+  expect(cells[95]).toHaveStyle({ gridRow: '12', gridColumn: '8' });
+});
+
 test('cancels a pointer selection without completing it', () => {
   let completed = false;
   render(

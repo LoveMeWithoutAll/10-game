@@ -159,6 +159,7 @@ export function GameBoard({
             data-column={column}
             data-value={value ?? ''}
             key={index}
+            style={{ gridRow: row + 1, gridColumn: column + 1 }}
           >
             {value !== null && (
               <span className="apple" aria-hidden="true">
