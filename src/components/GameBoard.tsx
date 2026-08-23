@@ -5,6 +5,7 @@ import {
   TARGET_SUM,
   getSelectionTotal,
   type Board,
+  type NumberPairHint,
   type Position,
   type Selection,
 } from '../game/gameEngine';
@@ -12,6 +13,7 @@ import {
 interface GameBoardProps {
   board: Board;
   interactive: boolean;
+  pairHints?: NumberPairHint[];
   onCompleteSelection: (selection: Selection) => void;
 }
 
@@ -41,11 +43,13 @@ function getPositionFromPointer(
 export function GameBoard({
   board,
   interactive,
+  pairHints = [],
   onCompleteSelection,
 }: GameBoardProps) {
   const [selection, setSelection] = useState<Selection | null>(null);
   const selectionRef = useRef<Selection | null>(null);
   const activePointerRef = useRef<number | null>(null);
+  const hintedIndexSet = new Set(pairHints.flatMap(({ indices }) => indices));
 
   const beginSelection = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!interactive || event.button !== 0) {
@@ -144,15 +148,16 @@ export function GameBoard({
       {board.map((value, index) => {
         const row = Math.floor(index / BOARD_COLUMNS);
         const column = index % BOARD_COLUMNS;
+        const isHinted = hintedIndexSet.has(index);
 
         return (
           <div
-            className={`game-cell${value === null ? ' game-cell--empty' : ''}`}
+            className={`game-cell${value === null ? ' game-cell--empty' : ''}${isHinted ? ' game-cell--hinted' : ''}`}
             role="gridcell"
             aria-label={
               value === null
                 ? `${row + 1}행 ${column + 1}열, 빈 칸`
-                : `${row + 1}행 ${column + 1}열, 숫자 ${value}`
+                : `${row + 1}행 ${column + 1}열, 숫자 ${value}${isHinted ? ', 가능한 쌍' : ''}`
             }
             aria-disabled={value === null}
             data-row={row}
@@ -168,6 +173,26 @@ export function GameBoard({
               </span>
             )}
           </div>
+        );
+      })}
+
+      {pairHints.map(({ indices: [firstIndex, secondIndex] }) => {
+        const firstRow = Math.floor(firstIndex / BOARD_COLUMNS);
+        const firstColumn = firstIndex % BOARD_COLUMNS;
+        const secondRow = Math.floor(secondIndex / BOARD_COLUMNS);
+        const secondColumn = secondIndex % BOARD_COLUMNS;
+
+        return (
+          <div
+            className="pair-hint-frame"
+            data-testid="pair-hint-frame"
+            aria-hidden="true"
+            key={`${firstIndex}-${secondIndex}`}
+            style={{
+              gridColumn: `${Math.min(firstColumn, secondColumn) + 1} / ${Math.max(firstColumn, secondColumn) + 2}`,
+              gridRow: `${Math.min(firstRow, secondRow) + 1} / ${Math.max(firstRow, secondRow) + 2}`,
+            }}
+          />
         );
       })}
 

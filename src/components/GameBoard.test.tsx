@@ -118,3 +118,28 @@ test('cancels a pointer selection without completing it', () => {
   expect(completed).toBe(false);
   expect(screen.queryByTestId('selection-frame')).not.toBeInTheDocument();
 });
+
+test('draws a connecting highlight over an available apple pair after timeout', () => {
+  const boardValues: Board = Array(96).fill(null);
+  boardValues[0] = 1;
+  boardValues[2] = 9;
+
+  render(
+    <GameBoard
+      board={boardValues}
+      interactive={false}
+      pairHints={[{ pair: [1, 9], indices: [0, 2] }]}
+      onCompleteSelection={() => undefined}
+    />,
+  );
+
+  const cells = screen.getAllByRole('gridcell');
+  expect(cells[0]).toHaveClass('game-cell--hinted');
+  expect(cells[2]).toHaveClass('game-cell--hinted');
+  expect(cells[1]).not.toHaveClass('game-cell--hinted');
+  expect(cells[0]).toHaveAccessibleName('1행 1열, 숫자 1, 가능한 쌍');
+  expect(screen.getByTestId('pair-hint-frame')).toHaveStyle({
+    gridColumn: '1 / 4',
+    gridRow: '1 / 2',
+  });
+});

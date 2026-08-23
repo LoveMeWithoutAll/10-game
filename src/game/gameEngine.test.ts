@@ -3,6 +3,7 @@ import {
   CELL_COUNT,
   clearSelection,
   createBoard,
+  getAvailableNumberPairHints,
   getAvailableNumberPairs,
   getSelectionIndices,
   getSelectionTotal,
@@ -118,5 +119,45 @@ describe('getAvailableNumberPairs', () => {
     board[2] = 9;
 
     expect(getAvailableNumberPairs(board)).toEqual([]);
+  });
+});
+
+describe('getAvailableNumberPairHints', () => {
+  test('returns one selectable cell pair for each distinct number pair', () => {
+    const board: Board = Array(CELL_COUNT).fill(null);
+    board[0] = 1;
+    board[2] = 9;
+    board[BOARD_COLUMNS * 3 + 4] = 2;
+    board[BOARD_COLUMNS * 5 + 4] = 8;
+    board[BOARD_COLUMNS * 8] = 5;
+    board[BOARD_COLUMNS * 8 + 1] = 5;
+
+    expect(getAvailableNumberPairHints(board)).toEqual([
+      { pair: [1, 9], indices: [0, 2] },
+      {
+        pair: [2, 8],
+        indices: [BOARD_COLUMNS * 3 + 4, BOARD_COLUMNS * 5 + 4],
+      },
+      {
+        pair: [5, 5],
+        indices: [BOARD_COLUMNS * 8, BOARD_COLUMNS * 8 + 1],
+      },
+    ]);
+  });
+
+  test('keeps every selectable location when the same number pair appears twice', () => {
+    const board: Board = Array(CELL_COUNT).fill(null);
+    board[0] = 1;
+    board[1] = 9;
+    board[BOARD_COLUMNS] = 1;
+    board[BOARD_COLUMNS + 1] = 9;
+
+    expect(getAvailableNumberPairHints(board)).toEqual([
+      { pair: [1, 9], indices: [0, 1] },
+      {
+        pair: [1, 9],
+        indices: [BOARD_COLUMNS, BOARD_COLUMNS + 1],
+      },
+    ]);
   });
 });

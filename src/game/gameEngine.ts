@@ -6,6 +6,11 @@ export const TARGET_SUM = 10;
 export type Board = Array<number | null>;
 export type NumberPair = readonly [number, number];
 
+export interface NumberPairHint {
+  pair: NumberPair;
+  indices: readonly [number, number];
+}
+
 export interface Position {
   row: number;
   column: number;
@@ -101,8 +106,8 @@ export function hasAvailableSelection(board: Board): boolean {
   return false;
 }
 
-export function getAvailableNumberPairs(board: Board): NumberPair[] {
-  const pairs = new Map<string, NumberPair>();
+export function getAvailableNumberPairHints(board: Board): NumberPairHint[] {
+  const hints: NumberPairHint[] = [];
 
   for (let firstIndex = 0; firstIndex < board.length; firstIndex += 1) {
     const firstValue = board[firstIndex];
@@ -137,8 +142,21 @@ export function getAvailableNumberPairs(board: Board): NumberPair[] {
         firstValue <= secondValue
           ? [firstValue, secondValue]
           : [secondValue, firstValue];
-      pairs.set(`${pair[0]}-${pair[1]}`, pair);
+      hints.push({ pair, indices: [firstIndex, secondIndex] });
     }
+  }
+
+  return hints.sort(
+    ({ indices: [firstLeft, firstRight] }, { indices: [secondLeft, secondRight] }) =>
+      firstLeft - secondLeft || firstRight - secondRight,
+  );
+}
+
+export function getAvailableNumberPairs(board: Board): NumberPair[] {
+  const pairs = new Map<string, NumberPair>();
+
+  for (const { pair } of getAvailableNumberPairHints(board)) {
+    pairs.set(`${pair[0]}-${pair[1]}`, pair);
   }
 
   return [...pairs.values()].sort(

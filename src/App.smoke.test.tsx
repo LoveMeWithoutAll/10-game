@@ -36,7 +36,7 @@ test('시간이 끝나면 결과를 보여주고 새 라운드를 시작할 수 
   let randomCallCount = 0;
   vi.spyOn(Math, 'random').mockImplementation(() => {
     randomCallCount += 1;
-    return randomCallCount % 2 === 1 ? 0 : 0.999;
+    return randomCallCount === 1 ? 0 : 0.999;
   });
   render(<App />);
   fireEvent.click(screen.getByRole('button', { name: '게임 시작' }));
@@ -45,8 +45,13 @@ test('시간이 끝나면 결과를 보여주고 새 라운드를 시작할 수 
 
   expect(screen.getByRole('heading', { name: '시간 종료' })).toBeInTheDocument();
   expect(screen.getByText('최종 점수 0점')).toBeInTheDocument();
-  expect(screen.getByText('남아 있던 숫자 쌍')).toBeInTheDocument();
-  expect(screen.getByText('1 + 9')).toBeInTheDocument();
+  expect(screen.queryByText('남아 있던 숫자 쌍')).not.toBeInTheDocument();
+  expect(screen.getAllByRole('gridcell')[0]).toHaveClass('game-cell--hinted');
+  expect(screen.getAllByRole('gridcell')[1]).toHaveClass('game-cell--hinted');
+  expect(screen.getAllByTestId('pair-hint-frame')).toHaveLength(2);
+  expect(screen.getByRole('region', { name: '게임 영역' })).toHaveClass(
+    'game-stage--timeout',
+  );
 
   fireEvent.click(screen.getByRole('button', { name: '다시 시작' }));
 

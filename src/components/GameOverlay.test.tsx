@@ -31,24 +31,19 @@ test('shows a victory when no available move remains', () => {
   expect(screen.getByText('최종 점수 12점')).toBeInTheDocument();
 });
 
-test('shows the available number pairs when time runs out', () => {
+test('shows a compact result without listing number pairs when time runs out', () => {
   render(
     <GameOverlay
       phase="finished"
       score={8}
       finishReason="timeout"
-      availablePairs={[
-        [1, 9],
-        [4, 6],
-        [5, 5],
-      ]}
       onStart={() => undefined}
     />,
   );
 
   expect(screen.getByRole('heading', { name: '시간 종료' })).toBeInTheDocument();
-  expect(screen.getByText('남아 있던 숫자 쌍')).toBeInTheDocument();
-  expect(screen.getByText('1 + 9')).toBeInTheDocument();
-  expect(screen.getByText('4 + 6')).toBeInTheDocument();
-  expect(screen.getByText('5 + 5')).toBeInTheDocument();
+  expect(screen.getByText('최종 점수 8점')).toBeInTheDocument();
+  expect(screen.getByRole('status', { name: '시간 종료 결과' })).toBeInTheDocument();
+  expect(screen.queryByText('120초 숫자 퍼즐')).not.toBeInTheDocument();
+  expect(screen.queryByText('남아 있던 숫자 쌍')).not.toBeInTheDocument();
 });

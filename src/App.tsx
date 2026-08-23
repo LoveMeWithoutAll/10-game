@@ -1,13 +1,13 @@
 import { GameBoard } from './components/GameBoard';
 import { GameOverlay } from './components/GameOverlay';
 import { GameStatus } from './components/GameStatus';
-import { getAvailableNumberPairs } from './game/gameEngine';
+import { getAvailableNumberPairHints } from './game/gameEngine';
 import { useFruitBoxGame } from './game/useFruitBoxGame';
 
 export default function App() {
   const game = useFruitBoxGame();
-  const availablePairs =
-    game.finishReason === 'timeout' ? getAvailableNumberPairs(game.board) : [];
+  const availablePairHints =
+    game.finishReason === 'timeout' ? getAvailableNumberPairHints(game.board) : [];
 
   return (
     <main className="game-shell">
@@ -24,7 +24,10 @@ export default function App() {
         )}
       </header>
 
-      <section className="game-stage" aria-label="게임 영역">
+      <section
+        className={`game-stage${game.finishReason === 'timeout' ? ' game-stage--timeout' : ''}`}
+        aria-label="게임 영역"
+      >
         {game.phase === 'idle' ? (
           <GameOverlay phase="idle" score={0} onStart={game.startGame} />
         ) : (
@@ -32,6 +35,7 @@ export default function App() {
             <GameBoard
               board={game.board}
               interactive={game.phase === 'playing'}
+              pairHints={availablePairHints}
               onCompleteSelection={game.completeSelection}
             />
             {game.phase === 'finished' && (
@@ -39,7 +43,6 @@ export default function App() {
                 phase="finished"
                 score={game.score}
                 finishReason={game.finishReason}
-                availablePairs={availablePairs}
                 onStart={game.startGame}
               />
             )}
