@@ -1,10 +1,13 @@
 import { GameBoard } from './components/GameBoard';
 import { GameOverlay } from './components/GameOverlay';
 import { GameStatus } from './components/GameStatus';
+import { getAvailableNumberPairs } from './game/gameEngine';
 import { useFruitBoxGame } from './game/useFruitBoxGame';
 
 export default function App() {
   const game = useFruitBoxGame();
+  const availablePairs =
+    game.finishReason === 'timeout' ? getAvailableNumberPairs(game.board) : [];
 
   return (
     <main className="game-shell">
@@ -36,6 +39,7 @@ export default function App() {
                 phase="finished"
                 score={game.score}
                 finishReason={game.finishReason}
+                availablePairs={availablePairs}
                 onStart={game.startGame}
               />
             )}

@@ -3,6 +3,7 @@ import {
   CELL_COUNT,
   clearSelection,
   createBoard,
+  getAvailableNumberPairs,
   getSelectionIndices,
   getSelectionTotal,
   hasAvailableSelection,
@@ -90,5 +91,32 @@ describe('hasAvailableSelection', () => {
     const board: Board = Array(CELL_COUNT).fill(9);
 
     expect(hasAvailableSelection(board)).toBe(false);
+  });
+});
+
+describe('getAvailableNumberPairs', () => {
+  test('returns each distinct two-number move that can actually be selected', () => {
+    const board: Board = Array(CELL_COUNT).fill(null);
+    board[0] = 1;
+    board[2] = 9;
+    board[BOARD_COLUMNS * 3 + 4] = 2;
+    board[BOARD_COLUMNS * 5 + 4] = 8;
+    board[BOARD_COLUMNS * 8] = 5;
+    board[BOARD_COLUMNS * 8 + 1] = 5;
+
+    expect(getAvailableNumberPairs(board)).toEqual([
+      [1, 9],
+      [2, 8],
+      [5, 5],
+    ]);
+  });
+
+  test('does not report values when another apple makes their rectangle invalid', () => {
+    const board: Board = Array(CELL_COUNT).fill(null);
+    board[0] = 1;
+    board[1] = 3;
+    board[2] = 9;
+
+    expect(getAvailableNumberPairs(board)).toEqual([]);
   });
 });

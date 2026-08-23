@@ -452,6 +452,41 @@ button {
   font-family: "SFMono-Regular", Consolas, monospace;
 }
 
+.game-overlay__pairs {
+  margin-top: clamp(0.6rem, 1.4vw, 0.9rem);
+}
+
+.game-overlay__pairs-label,
+.game-overlay__pairs-empty {
+  margin: 0;
+  color: #64734d;
+  font-size: clamp(0.72rem, 1.4vw, 0.86rem);
+  font-weight: 800;
+}
+
+.game-overlay__pair-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.game-overlay__pair {
+  padding: 0.3rem 0.58rem;
+  color: var(--orchard-deep);
+  border: 1px solid #d7b648;
+  border-radius: 999px;
+  background: #fff1a9;
+  font: 900 clamp(0.72rem, 1.5vw, 0.9rem) / 1 "SFMono-Regular", Consolas, monospace;
+}
+
+.game-overlay__pairs-empty {
+  margin-top: 0.35rem;
+}
+
 .primary-button {
   min-width: clamp(8.8rem, 22vw, 12rem);
   min-height: 3rem;

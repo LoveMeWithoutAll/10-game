@@ -4,6 +4,7 @@ export const CELL_COUNT = BOARD_COLUMNS * BOARD_ROWS;
 export const TARGET_SUM = 10;
 
 export type Board = Array<number | null>;
+export type NumberPair = readonly [number, number];
 
 export interface Position {
   row: number;
@@ -98,4 +99,50 @@ export function hasAvailableSelection(board: Board): boolean {
   }
 
   return false;
+}
+
+export function getAvailableNumberPairs(board: Board): NumberPair[] {
+  const pairs = new Map<string, NumberPair>();
+
+  for (let firstIndex = 0; firstIndex < board.length; firstIndex += 1) {
+    const firstValue = board[firstIndex];
+
+    if (firstValue === null) {
+      continue;
+    }
+
+    for (let secondIndex = firstIndex + 1; secondIndex < board.length; secondIndex += 1) {
+      const secondValue = board[secondIndex];
+
+      if (secondValue === null || firstValue + secondValue !== TARGET_SUM) {
+        continue;
+      }
+
+      const selection: Selection = {
+        start: {
+          row: Math.floor(firstIndex / BOARD_COLUMNS),
+          column: firstIndex % BOARD_COLUMNS,
+        },
+        end: {
+          row: Math.floor(secondIndex / BOARD_COLUMNS),
+          column: secondIndex % BOARD_COLUMNS,
+        },
+      };
+
+      if (getSelectionTotal(board, selection) !== TARGET_SUM) {
+        continue;
+      }
+
+      const pair: NumberPair =
+        firstValue <= secondValue
+          ? [firstValue, secondValue]
+          : [secondValue, firstValue];
+      pairs.set(`${pair[0]}-${pair[1]}`, pair);
+    }
+  }
+
+  return [...pairs.values()].sort(
+    ([firstLeft, firstRight], [secondLeft, secondRight]) =>
+      firstLeft - secondLeft || firstRight - secondRight,
+  );
 }
