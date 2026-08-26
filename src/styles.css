@@ -320,6 +320,124 @@ button {
   background: rgb(112 67 46 / 12%);
 }
 
+.apple-burst {
+  position: relative;
+  z-index: 7;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.apple-burst__ring,
+.apple-burst__particle {
+  position: absolute;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.apple-burst__ring {
+  border: clamp(2px, 0.28vw, 4px) solid rgb(255 239 166 / 92%);
+  box-shadow:
+    0 0 0.4rem rgb(255 210 77 / 80%),
+    inset 0 0 0.3rem rgb(255 255 255 / 75%);
+  animation: apple-burst-ring 650ms cubic-bezier(0.18, 0.72, 0.22, 1) forwards;
+}
+
+.apple-burst__particle {
+  width: 17%;
+  background: var(--apple);
+  box-shadow: inset -1px -1px 0 rgb(126 21 22 / 22%);
+  animation: apple-burst-particle 650ms cubic-bezier(0.12, 0.62, 0.2, 1) forwards;
+}
+
+.apple-burst__particle:nth-child(2) {
+  --burst-x: -185%;
+  --burst-y: -35%;
+  --burst-rotation: -85deg;
+}
+
+.apple-burst__particle:nth-child(3) {
+  --burst-x: -125%;
+  --burst-y: -150%;
+  --burst-rotation: -45deg;
+}
+
+.apple-burst__particle:nth-child(4) {
+  --burst-x: 20%;
+  --burst-y: -190%;
+  --burst-rotation: 25deg;
+}
+
+.apple-burst__particle:nth-child(5) {
+  --burst-x: 155%;
+  --burst-y: -120%;
+  --burst-rotation: 70deg;
+}
+
+.apple-burst__particle:nth-child(6) {
+  --burst-x: 185%;
+  --burst-y: 25%;
+  --burst-rotation: 115deg;
+}
+
+.apple-burst__particle:nth-child(7) {
+  --burst-x: 115%;
+  --burst-y: 155%;
+  --burst-rotation: 160deg;
+}
+
+.apple-burst__particle:nth-child(8) {
+  --burst-x: -25%;
+  --burst-y: 185%;
+  --burst-rotation: 205deg;
+  background: var(--leaf);
+}
+
+.apple-burst__particle:nth-child(9) {
+  --burst-x: -155%;
+  --burst-y: 120%;
+  --burst-rotation: 250deg;
+  background: var(--leaf);
+}
+
+@keyframes apple-burst-ring {
+  0% {
+    opacity: 1;
+    transform: scale(0.45);
+  }
+
+  55% {
+    opacity: 0.72;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.65);
+  }
+}
+
+@keyframes apple-burst-particle {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1.2);
+  }
+
+  72% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(var(--burst-x), var(--burst-y))
+      rotate(var(--burst-rotation))
+      scale(0.45);
+  }
+}
+
 .game-cell--hinted {
   z-index: 4;
 }
@@ -570,6 +688,10 @@ button {
   .game-cell--hinted .apple,
   .pair-hint-frame {
     animation: none;
+  }
+
+  .apple-burst {
+    display: none;
   }
 }
 

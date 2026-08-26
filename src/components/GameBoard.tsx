@@ -1,4 +1,9 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import {
   BOARD_COLUMNS,
   BOARD_ROWS,
@@ -16,6 +21,14 @@ interface GameBoardProps {
   pairHints?: NumberPairHint[];
   onCompleteSelection: (selection: Selection) => void;
 }
+
+interface AppleBurst {
+  id: number;
+  index: number;
+}
+
+const BURST_DURATION_MS = 650;
+const BURST_PARTICLE_COUNT = 8;
 
 function getPositionFromPointer(
   element: HTMLElement,
@@ -47,9 +60,42 @@ export function GameBoard({
   onCompleteSelection,
 }: GameBoardProps) {
   const [selection, setSelection] = useState<Selection | null>(null);
+  const [bursts, setBursts] = useState<AppleBurst[]>([]);
   const selectionRef = useRef<Selection | null>(null);
   const activePointerRef = useRef<number | null>(null);
+  const previousBoardRef = useRef(board);
+  const nextBurstIdRef = useRef(0);
   const hintedIndexSet = new Set(pairHints.flatMap(({ indices }) => indices));
+
+  useEffect(() => {
+    const previousBoard = previousBoardRef.current;
+    const hasRestoredApple = board.some(
+      (value, index) => value !== null && previousBoard[index] === null,
+    );
+    const nextBursts = board.flatMap((value, index) =>
+      value === null && previousBoard[index] !== null
+        ? [{ id: nextBurstIdRef.current++, index }]
+        : [],
+    );
+
+    previousBoardRef.current = board;
+
+    if (hasRestoredApple) {
+      setBursts(nextBursts);
+    } else if (nextBursts.length > 0) {
+      setBursts((currentBursts) => [...currentBursts, ...nextBursts]);
+    }
+  }, [board]);
+
+  useEffect(() => {
+    if (bursts.length === 0) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => setBursts([]), BURST_DURATION_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [bursts]);
 
   const beginSelection = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!interactive || event.button !== 0) {
@@ -172,6 +218,26 @@ export function GameBoard({
                 <span className="apple__number">{value}</span>
               </span>
             )}
+          </div>
+        );
+      })}
+
+      {bursts.map(({ id, index }) => {
+        const row = Math.floor(index / BOARD_COLUMNS);
+        const column = index % BOARD_COLUMNS;
+
+        return (
+          <div
+            className="apple-burst"
+            data-testid="apple-burst"
+            aria-hidden="true"
+            key={id}
+            style={{ gridRow: row + 1, gridColumn: column + 1 }}
+          >
+            <span className="apple-burst__ring" />
+            {Array.from({ length: BURST_PARTICLE_COUNT }, (_, particleIndex) => (
+              <span className="apple-burst__particle" key={particleIndex} />
+            ))}
           </div>
         );
       })}

@@ -1,7 +1,11 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { expect, test } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, expect, test, vi } from 'vitest';
 import { type Board, type Selection } from '../game/gameEngine';
 import { GameBoard } from './GameBoard';
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 function setBoardBounds(board: HTMLElement) {
   Object.defineProperty(board, 'getBoundingClientRect', {
@@ -142,4 +146,39 @@ test('draws a connecting highlight over an available apple pair after timeout', 
     gridColumn: '1 / 4',
     gridRow: '1 / 2',
   });
+});
+
+test('bursts each apple that changes from a number to a cleared cell', () => {
+  vi.useFakeTimers();
+  const before: Board = Array(96).fill(null);
+  before[0] = 4;
+  before[1] = 6;
+  const after: Board = [...before];
+  after[0] = null;
+  after[1] = null;
+
+  const { rerender } = render(
+    <GameBoard
+      board={before}
+      interactive
+      onCompleteSelection={() => undefined}
+    />,
+  );
+
+  rerender(
+    <GameBoard
+      board={after}
+      interactive
+      onCompleteSelection={() => undefined}
+    />,
+  );
+
+  const bursts = screen.getAllByTestId('apple-burst');
+  expect(bursts).toHaveLength(2);
+  expect(bursts[0]).toHaveStyle({ gridRow: '1', gridColumn: '1' });
+  expect(bursts[1]).toHaveStyle({ gridRow: '1', gridColumn: '2' });
+
+  act(() => vi.advanceTimersByTime(700));
+
+  expect(screen.queryByTestId('apple-burst')).not.toBeInTheDocument();
 });
