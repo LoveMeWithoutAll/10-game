@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, expect, test, vi } from 'vitest';
 import { type Board, type Selection } from '../game/gameEngine';
 import { GameBoard } from './GameBoard';
@@ -177,8 +177,13 @@ test('bursts each apple that changes from a number to a cleared cell', () => {
   expect(bursts).toHaveLength(2);
   expect(bursts[0]).toHaveStyle({ gridRow: '1', gridColumn: '1' });
   expect(bursts[1]).toHaveStyle({ gridRow: '1', gridColumn: '2' });
+  expect(within(bursts[0]).getByTestId('apple-burst-flash')).toBeInTheDocument();
+  expect(within(bursts[0]).getAllByTestId('apple-burst-ring')).toHaveLength(2);
+  expect(within(bursts[0]).getAllByTestId('apple-burst-particle')).toHaveLength(
+    16,
+  );
 
-  act(() => vi.advanceTimersByTime(700));
+  act(() => vi.advanceTimersByTime(900));
 
   expect(screen.queryByTestId('apple-burst')).not.toBeInTheDocument();
 });

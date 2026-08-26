@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import {
@@ -27,8 +28,25 @@ interface AppleBurst {
   index: number;
 }
 
-const BURST_DURATION_MS = 650;
-const BURST_PARTICLE_COUNT = 8;
+const BURST_DURATION_MS = 850;
+const BURST_PARTICLES = [
+  { x: -330, y: -80, rotation: -155, delay: 0, size: 20, variant: 'flesh' },
+  { x: -250, y: -250, rotation: -95, delay: 20, size: 15, variant: 'juice' },
+  { x: -105, y: -345, rotation: -45, delay: 0, size: 19, variant: 'flesh' },
+  { x: 70, y: -310, rotation: 35, delay: 35, size: 13, variant: 'juice' },
+  { x: 245, y: -265, rotation: 85, delay: 5, size: 21, variant: 'flesh' },
+  { x: 345, y: -105, rotation: 140, delay: 30, size: 14, variant: 'juice' },
+  { x: 320, y: 80, rotation: 190, delay: 0, size: 18, variant: 'flesh' },
+  { x: 260, y: 245, rotation: 235, delay: 45, size: 13, variant: 'juice' },
+  { x: 95, y: 340, rotation: 285, delay: 10, size: 20, variant: 'flesh' },
+  { x: -70, y: 315, rotation: 330, delay: 40, size: 14, variant: 'juice' },
+  { x: -245, y: 260, rotation: 385, delay: 0, size: 19, variant: 'flesh' },
+  { x: -345, y: 105, rotation: 430, delay: 25, size: 13, variant: 'juice' },
+  { x: -185, y: -185, rotation: 490, delay: 65, size: 15, variant: 'leaf' },
+  { x: 185, y: -175, rotation: 545, delay: 55, size: 16, variant: 'flesh' },
+  { x: 180, y: 185, rotation: 600, delay: 70, size: 14, variant: 'leaf' },
+  { x: -175, y: 180, rotation: 655, delay: 60, size: 16, variant: 'flesh' },
+] as const;
 
 function getPositionFromPointer(
   element: HTMLElement,
@@ -234,9 +252,33 @@ export function GameBoard({
             key={id}
             style={{ gridRow: row + 1, gridColumn: column + 1 }}
           >
-            <span className="apple-burst__ring" />
-            {Array.from({ length: BURST_PARTICLE_COUNT }, (_, particleIndex) => (
-              <span className="apple-burst__particle" key={particleIndex} />
+            <span
+              className="apple-burst__flash"
+              data-testid="apple-burst-flash"
+            />
+            <span
+              className="apple-burst__ring apple-burst__ring--primary"
+              data-testid="apple-burst-ring"
+            />
+            <span
+              className="apple-burst__ring apple-burst__ring--secondary"
+              data-testid="apple-burst-ring"
+            />
+            {BURST_PARTICLES.map((particle, particleIndex) => (
+              <span
+                className={`apple-burst__particle apple-burst__particle--${particle.variant}`}
+                data-testid="apple-burst-particle"
+                key={particleIndex}
+                style={
+                  {
+                    '--burst-x': `${particle.x}%`,
+                    '--burst-y': `${particle.y}%`,
+                    '--burst-rotation': `${particle.rotation}deg`,
+                    '--burst-delay': `${particle.delay}ms`,
+                    '--burst-size': `${particle.size}%`,
+                  } as CSSProperties
+                }
+              />
             ))}
           </div>
         );
